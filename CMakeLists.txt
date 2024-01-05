@@ -5,15 +5,13 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-cmake_minimum_required(VERSION 2.8) 
-
 project(SnakeGame)
 
 set(SOURCE_EXE SnakeGame.cpp)
 
 add_executable(SnakeGame ${SOURCE_EXE})
 
-set(SOURCE_LIB Sleep.cpp Input.cpp OS.hpp KeyCodes.hpp)
+set(SOURCE_LIB Sleep.cpp Input.cpp OS.hpp KeyCodes.hpp GameField.hpp GameField.cpp)
 
 add_library(Lib STATIC ${SOURCE_LIB})
 

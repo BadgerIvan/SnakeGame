@@ -1,7 +1,6 @@
 #ifndef Input_CPP
 #define Input_CPP
 
-#include <vector>
 #include "OS.hpp"
 #include "KeyCodes.hpp"
 
@@ -11,9 +10,15 @@
 const unsigned char keyCodes[5] = { VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT, VK_ESCAPE };
 
 #elif LINUX
-// todo input for linux
+
+#include <iostream>
+#include <termios.h>
+#include <unistd.h>
+
 #else 
+
 #error OS is not Windows or Linux
+
 #endif
 
 int InputKey() {
@@ -26,17 +31,11 @@ int InputKey() {
 		}
 	}
 
-#endif //WINDOWS
-
-#ifdef LINUX
-// todo input for linux
-#endif //LINUX
-
 	switch (key) {
 	case VK_UP:
 		return K_UP;
 	case VK_DOWN:
-		return K_UP;
+		return K_DOWN;
 	case VK_RIGHT:
 		return K_RIGHT;
 	case VK_LEFT:
@@ -46,6 +45,37 @@ int InputKey() {
 	default:
 		return K_NONE;
 	}
+
+#endif //WINDOWS
+
+#ifdef LINUX
+    struct termios oldt, newt;
+    int ch;
+
+    if (tcgetattr(STDIN_FILENO, &oldt) != 0) {
+        std::cerr << "Error: tcgetattr failed" << std::endl;
+        return 1;
+    }
+
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) != 0) {
+        std::cerr << "Error: tcsetattr failed" << std::endl;
+        return 1;
+    }
+
+    ch = std::cin.get();
+
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &oldt) != 0) {
+        std::cerr << "Error: tcsetattr failed" << std::endl;
+        return 1;
+    }
+
+    key = (unsigned char)ch;
+
+#endif //LINUX
+
 }
 
 #endif // Input_CPP
